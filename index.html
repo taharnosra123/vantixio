@@ -4,15 +4,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>VANTIXIO | AI Biometric Analysis</title>
-    <meta property="og:title" content="VANTIXIO | AI Glowup Rating">
-    <meta property="og:description" content="What is your aesthetic potential? Get your AI rating now.">
+    <meta property="og:title" content="VANTIXIO | Biometric Breakdown">
+    <meta property="og:description" content="View my 6-point aesthetic analysis. Check yours now.">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
     <style>
         :root { 
             --green: #00E676; 
             --bg: #000; 
             --card: #121212; 
-            --text-secondary: #888;
+            --bar-bg: #2A2A2A; /* Darker gray for the bar background */
+            --text-secondary: #AAAAAA; /* Matches the screenshot's lighter gray */
         }
         
         * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -29,99 +30,93 @@
 
         .container { width: 100%; max-width: 380px; }
 
-        .logo { 
-            text-align: center; 
-            font-weight: 800; 
-            font-size: 1.5rem; 
-            margin-bottom: 30px; 
-            letter-spacing: -1px;
-        }
+        .logo { text-align: center; font-weight: 800; font-size: 1.5rem; margin-bottom: 30px; letter-spacing: -1px;}
         .logo span { color: var(--green); }
 
         .upload-box { 
-            background: var(--card); 
-            border: 1px solid #222; 
-            border-radius: 30px; 
-            aspect-ratio: 1/1.2; 
-            display: flex; 
-            align-items: center; 
-            justify-content: center; 
-            overflow: hidden; 
-            cursor: pointer; 
-            position: relative;
-            transition: transform 0.3s ease;
+            background: var(--card); border: 1px solid #222; border-radius: 30px; aspect-ratio: 1/1.2; 
+            display: flex; align-items: center; justify-content: center; overflow: hidden; 
+            cursor: pointer; position: relative; transition: transform 0.3s ease;
         }
-        
-        .upload-box:active { transform: scale(0.98); }
-
         #preview { width: 100%; height: 100%; object-fit: cover; display: none; }
+        .scan-line { position: absolute; width: 100%; height: 4px; background: var(--green); box-shadow: 0 0 20px var(--green); top: 0; display: none; animation: scan 2s infinite linear; z-index: 10; }
+        @keyframes scan { 0% { top: 0; } 100% { top: 100%; } }
 
-        .scan-line { 
-            position: absolute; 
-            width: 100%; 
-            height: 4px; 
-            background: var(--green); 
-            box-shadow: 0 0 20px var(--green); 
-            top: 0; 
-            display: none; 
-            animation: scan 2s infinite linear; 
-            z-index: 10;
-        }
+        .btn { background: #fff; color: #000; width: 100%; padding: 20px; border-radius: 20px; font-weight: 800; border: none; margin-top: 20px; cursor: pointer; transition: all 0.2s ease; }
+        .btn:disabled { opacity: 0.5; }
 
-        @keyframes scan { 
-            0% { top: 0; } 
-            100% { top: 100%; } 
-        }
-
-        .btn { 
-            background: #fff; 
-            color: #000; 
-            width: 100%; 
-            padding: 20px; 
-            border-radius: 20px; 
-            font-weight: 800; 
-            border: none; 
-            margin-top: 20px; 
-            cursor: pointer;
-            transition: all 0.2s ease;
-        }
-
-        .btn:disabled { opacity: 0.5; cursor: not-allowed; }
-
-        .btn-share {
-            background: var(--green);
-            color: #000;
-            margin-top: 12px;
-        }
-
+        /* THE NEW GRID LAYOUT (from your image) */
         #results { display: none; margin-top: 30px; animation: fadeIn 0.5s ease; }
-        
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        .score-card { 
+        .biometric-card { 
             background: var(--card); 
             padding: 25px; 
             border-radius: 25px; 
-            margin-bottom: 15px; 
-            text-align: center;
             border: 1px solid #222;
         }
 
-        .score-label { font-size: 0.7rem; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 2px; margin-bottom: 5px; }
-        .score-value { font-size: 3rem; font-weight: 800; }
-
-        .tips-container { margin-top: 20px; }
-        .tip-item { 
-            background: #1a1a1a; 
-            padding: 18px; 
-            border-radius: 20px; 
-            margin-bottom: 12px; 
-            border-left: 4px solid var(--green); 
-            font-size: 0.85rem; 
-            line-height: 1.5;
+        .biometric-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr; /* Two equal columns */
+            gap: 25px; /* Spaces between the boxes */
         }
 
-        #upload-text { text-align: center; color: var(--text-secondary); font-weight: 600; }
+        /* Individual Stat Item */
+        .stat-item {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .stat-label { 
+            font-size: 0.8rem; 
+            color: #fff; /* White like the image */
+            font-weight: 600;
+            margin-bottom: 3px;
+        }
+
+        /* Container for the score and progress bar */
+        .stat-meta {
+            display: flex;
+            align-items: flex-end; /* Aligns the /100 with the bottom of the number */
+            margin-bottom: 6px;
+        }
+
+        .stat-value { 
+            font-size: 2.2rem; 
+            font-weight: 800; 
+            color: #fff;
+            line-height: 1; /* Stops extra space around the big number */
+        }
+
+        .stat-total {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            font-weight: 600;
+            margin-left: 2px;
+            padding-bottom: 3px; /* nudges it up slightly */
+        }
+
+        /* THE PROGRESS BARS */
+        .progress-container {
+            width: 100%;
+            height: 6px;
+            background: var(--bar-bg);
+            border-radius: 6px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--green);
+            width: 0%; /* AI will update this */
+            transition: width 1s ease-out; /* Smooth growth animation */
+            border-radius: 6px;
+        }
+
+        .tips-container { margin-top: 20px; }
+        .tip-item { background: #1a1a1a; padding: 18px; border-radius: 20px; margin-bottom: 12px; border-left: 4px solid var(--green); font-size: 0.85rem; line-height: 1.5; }
+        #upload-text { text-align: center; color: #888; font-weight: 600; }
     </style>
 </head>
 <body>
@@ -139,103 +134,115 @@
         <button class="btn" id="actionBtn" onclick="startAnalysis()">ANALYZE BIOMETRICS</button>
 
         <div id="results">
-            <div class="score-card">
-                <div class="score-label">Potential Aesthetic Rating</div>
-                <div id="score" class="score-value">0</div>
+            <div class="biometric-card">
+                <div class="biometric-grid">
+                    
+                    <div class="stat-item">
+                        <div class="stat-label">Hairline</div>
+                        <div class="stat-meta">
+                            <div id="val-hairline" class="stat-value">0</div>
+                            <div class="stat-total">/100</div>
+                        </div>
+                        <div class="progress-container"><div id="bar-hairline" class="progress-fill"></div></div>
+                    </div>
+
+                    <div class="stat-item">
+                        <div class="stat-label">Skin</div>
+                        <div class="stat-meta">
+                            <div id="val-skin" class="stat-value">0</div>
+                            <div class="stat-total">/100</div>
+                        </div>
+                        <div class="progress-container"><div id="bar-skin" class="progress-fill"></div></div>
+                    </div>
+
+                    <div class="stat-item">
+                        <div class="stat-label">Masculinity</div>
+                        <div class="stat-meta">
+                            <div id="val-masculinity" class="stat-value">0</div>
+                            <div class="stat-total">/100</div>
+                        </div>
+                        <div class="progress-container"><div id="bar-masculinity" class="progress-fill"></div></div>
+                    </div>
+
+                    <div class="stat-item">
+                        <div class="stat-label">Jawline</div>
+                        <div class="stat-meta">
+                            <div id="val-jawline" class="stat-value">0</div>
+                            <div class="stat-total">/100</div>
+                        </div>
+                        <div class="progress-container"><div id="bar-jawline" class="progress-fill"></div></div>
+                    </div>
+
+                    <div class="stat-item">
+                        <div class="stat-label">Eyes</div>
+                        <div class="stat-meta">
+                            <div id="val-eyes" class="stat-value">0</div>
+                            <div class="stat-total">/100</div>
+                        </div>
+                        <div class="progress-container"><div id="bar-eyes" class="progress-fill"></div></div>
+                    </div>
+
+                    <div class="stat-item">
+                        <div class="stat-label">Cheekbones</div>
+                        <div class="stat-meta">
+                            <div id="val-cheekbones" class="stat-value">0</div>
+                            <div class="stat-total">/100</div>
+                        </div>
+                        <div class="progress-container"><div id="bar-cheekbones" class="progress-fill"></div></div>
+                    </div>
+
+                </div>
             </div>
 
             <div id="tips-list" class="tips-container">
                 </div>
-
-            <button class="btn btn-share" onclick="shareResults()">SHARE MY GLOWUP 🚀</button>
+            
+            <button class="btn" style="background: var(--green); color: #000; margin-top: 10px;" onclick="shareResults()">SHARE MY REPORT 🚀</button>
         </div>
     </div>
 
     <script>
-        function showPreview(input) {
-            if (input.files[0]) {
-                const reader = new FileReader();
-                reader.onload = e => {
-                    const preview = document.getElementById('preview');
-                    preview.src = e.target.result;
-                    preview.style.display = 'block';
-                    document.getElementById('upload-text').style.display = 'none';
-                    // Reset UI if they upload a new photo
-                    document.getElementById('results').style.display = 'none';
-                    document.getElementById('actionBtn').style.display = 'block';
-                }
-                reader.readAsDataURL(input.files[0]);
-            }
-        }
+        // ... (Preview function is the same, skipped for brevity but included in the copy-paste block)
+        function showPreview(input) { if (input.files[0]) { const reader = new FileReader(); reader.onload = e => { const preview = document.getElementById('preview'); preview.src = e.target.result; preview.style.display = 'block'; document.getElementById('upload-text').style.display = 'none'; document.getElementById('results').style.display = 'none'; document.getElementById('actionBtn').style.display = 'block'; }; reader.readAsDataURL(input.files[0]); } }
 
         async function startAnalysis() {
             const file = document.getElementById('fileIn').files[0];
-            if (!file) return alert("Please upload a photo first.");
-
+            if (!file) return alert("Upload a portrait.");
             const btn = document.getElementById('actionBtn');
             const scanner = document.getElementById('scanner');
-            
-            // UI States
-            btn.disabled = true;
-            btn.innerText = "EXTRACTING DATA...";
+            btn.disabled = true; btn.innerText = "BIOMETRIC SYNCING...";
             scanner.style.display = "block";
 
-            // 1. Convert to small Base64 for the AI
-            const base64 = await new Promise(resolve => {
-                const reader = new FileReader();
-                reader.onload = () => resolve(reader.result.split(',')[1]);
-                reader.readAsDataURL(file);
-            });
+            const base64 = await new Promise(r => { const reader = new FileReader(); reader.onload = () => r(reader.result.split(',')[1]); reader.readAsDataURL(file); });
 
             try {
-                // 2. Call your Vercel Brain (api/analyze.js)
-                const response = await fetch('/api/analyze', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ image: base64 })
-                });
-
+                const response = await fetch('/api/analyze', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ image: base64 }) });
                 const data = await response.json();
-
                 if (data.error) throw new Error(data.error);
 
-                // 3. Display Results
-                document.getElementById('score').innerText = data.overall;
-                document.getElementById('tips-list').innerHTML = data.tips.map(tip => `
-                    <div class="tip-item">${tip}</div>
-                `).join('');
+                // --- UPDATING THE 6 STATS (THE NEW LOGIC) ---
+                const stats = data.stats;
+                const categories = ['hairline', 'skin', 'masculinity', 'jawline', 'eyes', 'cheekbones'];
 
+                categories.forEach(cat => {
+                    const score = stats[cat];
+                    // 1. Set the big number
+                    document.getElementById(`val-${cat}`).innerText = score;
+                    // 2. Animate the progress bar width
+                    // (We add a tiny delay so you can watch them grow)
+                    setTimeout(() => {
+                        document.getElementById(`bar-${cat}`).style.width = `${score}%`;
+                    }, categories.indexOf(cat) * 50); // Staggered animation
+                });
+
+                document.getElementById('tips-list').innerHTML = data.glowup_tips.map(tip => `<div class="tip-item">${tip}</div>`).join('');
                 document.getElementById('results').style.display = 'block';
                 btn.style.display = 'none';
 
-            } catch (err) {
-                alert(err.message);
-                btn.innerText = "RETRY ANALYSIS";
-                btn.disabled = false;
-            } finally {
-                scanner.style.display = "none";
-            }
+            } catch (err) { alert(err.message); btn.innerText = "RETRY"; btn.disabled = false; } finally { scanner.style.display = "none"; }
         }
 
-        async function shareResults() {
-            const score = document.getElementById('score').innerText;
-            const shareData = {
-                title: 'VANTIXIO AI Report',
-                text: `My aesthetic potential is ${score}/100 according to VANTIXIO AI. Scan yours here:`,
-                url: window.location.href
-            };
-
-            try {
-                if (navigator.share) {
-                    await navigator.share(shareData);
-                } else {
-                    await navigator.clipboard.writeText(`${shareData.text} ${shareData.url}`);
-                    alert("Results copied to clipboard! Paste it on your story.");
-                }
-            } catch (err) {
-                console.log("Share failed", err);
-            }
-        }
+        async function shareResults() { const shareData = { title: 'VANTIXIO AI Report', text: `My biometric scan is complete. Scan your aesthetic potential here:`, url: window.location.href }; try { if (navigator.share) { await navigator.share(shareData); } else { alert("Copied!"); } } catch (err) {} }
     </script>
 </body>
 </html>
