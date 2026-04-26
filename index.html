@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VANTIXIO | AI Analysis</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+        :root { --green: #00E676; --bg: #000; --card: #121212; }
+        body { background: var(--bg); color: #fff; font-family: 'Plus Jakarta Sans', sans-serif; display: flex; justify-content: center; padding: 20px; }
+        .container { width: 100%; max-width: 380px; }
+        .logo { text-align: center; font-weight: 800; font-size: 1.5rem; margin-bottom: 30px; }
+        .logo span { color: var(--green); }
+        .upload-box { background: var(--card); border: 1px solid #222; border-radius: 30px; aspect-ratio: 1/1.2; display: flex; align-items: center; justify-content: center; overflow: hidden; cursor: pointer; position: relative; }
+        #preview { width: 100%; height: 100%; object-fit: cover; display: none; }
+        .scan-line { position: absolute; width: 100%; height: 4px; background: var(--green); box-shadow: 0 0 20px var(--green); top: 0; display: none; animation: scan 2s infinite linear; }
+        @keyframes scan { 0% { top: 0; } 100% { top: 100%; } }
+        .btn { background: #fff; color: #000; width: 100%; padding: 20px; border-radius: 20px; font-weight: 800; border: none; margin-top: 20px; cursor: pointer; }
+        #results { display: none; margin-top: 20px; }
+        .score-box { background: var(--card); padding: 20px; border-radius: 20px; margin-bottom: 10px; }
+        .tip { background: #1a1a1a; padding: 15px; border-radius: 15px; margin-bottom: 10px; border-left: 4px solid var(--green); font-size: 0.8rem; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="logo">VANTI<span>XIO</span></div>
+        <div class="upload-box" onclick="document.getElementById('fileIn').click()">
+            <div id="scanner" class="scan-line"></div>
+            <img id="preview">
+            <div id="text">✦ Upload Photo</div>
+            <input type="file" id="fileIn" hidden accept="image/*" onchange="showPreview(this)">
+        </div>
+        <button class="btn" id="btn" onclick="startAnalysis()">ANALYZE BIOMETRICS</button>
+        <div id="results">
+            <div class="score-box">
+                <div style="font-size: 0.7rem; color: #888;">AI RATING</div>
+                <div id="score" style="font-size: 2rem; font-weight: 800;">0</div>
+            </div>
+            <div id="tips"></div>
+        </div>
+    </div>
+
+    <script>
+        function showPreview(input) {
+            if (input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = e => {
+                    document.getElementById('preview').src = e.target.result;
+                    document.getElementById('preview').style.display = 'block';
+                    document.getElementById('text').style.display = 'none';
+                }
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+        async function startAnalysis() {
+            const file = document.getElementById('fileIn').files[0];
+            if (!file) return alert("Select a photo!");
+
+            const btn = document.getElementById('btn');
+            btn.disabled = true; btn.innerText = "THINKING...";
+            document.getElementById('scanner').style.display = 'block';
+
+            // Convert to small Base64 to save bandwidth
+            const base64 = await new Promise(r => {
+                const reader = new FileReader();
+                reader.onload = () => r(reader.result.split(',')[1]);
+                reader.readAsDataURL(file);
+            });
+
+            try {
+                const res = await fetch('/api/analyze', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ image: base64 })
+                });
+                
+                const data = await res.json();
+                if (data.error) throw new Error(data.error);
+
+                document.getElementById('score').innerText = data.overall;
+                document.getElementById('tips').innerHTML = data.tips.map(t => `<div class="tip">${t}</div>`).join('');
+                document.getElementById('results').style.display = 'block';
+                btn.style.display = 'none';
+            } catch (e) {
+                alert(e.message);
+                btn.disabled = false; btn.innerText = "RETRY";
+            } finally {
+                document.getElementById('scanner').style.display = 'none';
+            }
+        }
+    </script>
+</body>
+</html>
