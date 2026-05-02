@@ -12,8 +12,8 @@
             --green: #00E676; 
             --bg: #000; 
             --card: #121212; 
-            --bar-bg: #2A2A2A; /* Darker gray for the bar background */
-            --text-secondary: #AAAAAA; /* Matches the screenshot's lighter gray */
+            --bar-bg: #2A2A2A; 
+            --text-secondary: #AAAAAA;
         }
         
         * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -45,74 +45,42 @@
         .btn { background: #fff; color: #000; width: 100%; padding: 20px; border-radius: 20px; font-weight: 800; border: none; margin-top: 20px; cursor: pointer; transition: all 0.2s ease; }
         .btn:disabled { opacity: 0.5; }
 
-        /* THE NEW GRID LAYOUT (from your image) */
         #results { display: none; margin-top: 30px; animation: fadeIn 0.5s ease; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
+        /* OVERALL SCORE CARD */
+        .overall-card {
+            background: var(--card);
+            padding: 30px;
+            border-radius: 25px;
+            text-align: center;
+            margin-bottom: 20px;
+            border: 1px solid var(--green);
+        }
+        .overall-label { font-size: 0.75rem; color: var(--green); font-weight: 800; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 5px; }
+        .overall-value { font-size: 4.5rem; font-weight: 800; color: #fff; line-height: 1; }
+
+        /* BIOMETRIC GRID */
         .biometric-card { 
             background: var(--card); 
             padding: 25px; 
             border-radius: 25px; 
             border: 1px solid #222;
         }
-
         .biometric-grid {
             display: grid;
-            grid-template-columns: 1fr 1fr; /* Two equal columns */
-            gap: 25px; /* Spaces between the boxes */
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
         }
+        .stat-item { display: flex; flex-direction: column; }
+        .stat-label { font-size: 0.8rem; color: #fff; font-weight: 600; margin-bottom: 3px; }
+        .stat-meta { display: flex; align-items: flex-end; margin-bottom: 6px; }
+        .stat-value { font-size: 2.2rem; font-weight: 800; color: #fff; line-height: 1; }
+        .stat-total { font-size: 0.8rem; color: var(--text-secondary); font-weight: 600; margin-left: 2px; padding-bottom: 3px; }
 
-        /* Individual Stat Item */
-        .stat-item {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .stat-label { 
-            font-size: 0.8rem; 
-            color: #fff; /* White like the image */
-            font-weight: 600;
-            margin-bottom: 3px;
-        }
-
-        /* Container for the score and progress bar */
-        .stat-meta {
-            display: flex;
-            align-items: flex-end; /* Aligns the /100 with the bottom of the number */
-            margin-bottom: 6px;
-        }
-
-        .stat-value { 
-            font-size: 2.2rem; 
-            font-weight: 800; 
-            color: #fff;
-            line-height: 1; /* Stops extra space around the big number */
-        }
-
-        .stat-total {
-            font-size: 0.8rem;
-            color: var(--text-secondary);
-            font-weight: 600;
-            margin-left: 2px;
-            padding-bottom: 3px; /* nudges it up slightly */
-        }
-
-        /* THE PROGRESS BARS */
-        .progress-container {
-            width: 100%;
-            height: 6px;
-            background: var(--bar-bg);
-            border-radius: 6px;
-            overflow: hidden;
-        }
-
-        .progress-fill {
-            height: 100%;
-            background: var(--green);
-            width: 0%; /* AI will update this */
-            transition: width 1s ease-out; /* Smooth growth animation */
-            border-radius: 6px;
-        }
+        /* PROGRESS BARS */
+        .progress-container { width: 100%; height: 6px; background: var(--bar-bg); border-radius: 6px; overflow: hidden; }
+        .progress-fill { height: 100%; background: var(--green); width: 0%; transition: width 1.2s cubic-bezier(0.17, 0.67, 0.83, 0.67); border-radius: 6px; }
 
         .tips-container { margin-top: 20px; }
         .tip-item { background: #1a1a1a; padding: 18px; border-radius: 20px; margin-bottom: 12px; border-left: 4px solid var(--green); font-size: 0.85rem; line-height: 1.5; }
@@ -134,115 +102,147 @@
         <button class="btn" id="actionBtn" onclick="startAnalysis()">ANALYZE BIOMETRICS</button>
 
         <div id="results">
+            <!-- OVERALL SCORE DISPLAY -->
+            <div class="overall-card">
+                <div class="overall-label">Overall Aesthetic Score</div>
+                <div id="overall-val" class="overall-value">0</div>
+            </div>
+
+            <!-- 6-POINT GRID -->
             <div class="biometric-card">
                 <div class="biometric-grid">
                     
                     <div class="stat-item">
                         <div class="stat-label">Hairline</div>
-                        <div class="stat-meta">
-                            <div id="val-hairline" class="stat-value">0</div>
-                            <div class="stat-total">/100</div>
-                        </div>
+                        <div class="stat-meta"><div id="val-hairline" class="stat-value">0</div><div class="stat-total">/100</div></div>
                         <div class="progress-container"><div id="bar-hairline" class="progress-fill"></div></div>
                     </div>
 
                     <div class="stat-item">
                         <div class="stat-label">Skin</div>
-                        <div class="stat-meta">
-                            <div id="val-skin" class="stat-value">0</div>
-                            <div class="stat-total">/100</div>
-                        </div>
+                        <div class="stat-meta"><div id="val-skin" class="stat-value">0</div><div class="stat-total">/100</div></div>
                         <div class="progress-container"><div id="bar-skin" class="progress-fill"></div></div>
                     </div>
 
                     <div class="stat-item">
                         <div class="stat-label">Masculinity</div>
-                        <div class="stat-meta">
-                            <div id="val-masculinity" class="stat-value">0</div>
-                            <div class="stat-total">/100</div>
-                        </div>
+                        <div class="stat-meta"><div id="val-masculinity" class="stat-value">0</div><div class="stat-total">/100</div></div>
                         <div class="progress-container"><div id="bar-masculinity" class="progress-fill"></div></div>
                     </div>
 
                     <div class="stat-item">
                         <div class="stat-label">Jawline</div>
-                        <div class="stat-meta">
-                            <div id="val-jawline" class="stat-value">0</div>
-                            <div class="stat-total">/100</div>
-                        </div>
+                        <div class="stat-meta"><div id="val-jawline" class="stat-value">0</div><div class="stat-total">/100</div></div>
                         <div class="progress-container"><div id="bar-jawline" class="progress-fill"></div></div>
                     </div>
 
                     <div class="stat-item">
                         <div class="stat-label">Eyes</div>
-                        <div class="stat-meta">
-                            <div id="val-eyes" class="stat-value">0</div>
-                            <div class="stat-total">/100</div>
-                        </div>
+                        <div class="stat-meta"><div id="val-eyes" class="stat-value">0</div><div class="stat-total">/100</div></div>
                         <div class="progress-container"><div id="bar-eyes" class="progress-fill"></div></div>
                     </div>
 
                     <div class="stat-item">
                         <div class="stat-label">Cheekbones</div>
-                        <div class="stat-meta">
-                            <div id="val-cheekbones" class="stat-value">0</div>
-                            <div class="stat-total">/100</div>
-                        </div>
+                        <div class="stat-meta"><div id="val-cheekbones" class="stat-value">0</div><div class="stat-total">/100</div></div>
                         <div class="progress-container"><div id="bar-cheekbones" class="progress-fill"></div></div>
                     </div>
 
                 </div>
             </div>
 
-            <div id="tips-list" class="tips-container">
-                </div>
+            <div id="tips-list" class="tips-container"></div>
             
-            <button class="btn" style="background: var(--green); color: #000; margin-top: 10px;" onclick="shareResults()">SHARE MY REPORT 🚀</button>
+            <button class="btn" style="background: var(--green); color: #000; margin-top: 10px;" onclick="shareResults()">SHARE MY GLOWUP 🚀</button>
         </div>
     </div>
 
     <script>
-        // ... (Preview function is the same, skipped for brevity but included in the copy-paste block)
-        function showPreview(input) { if (input.files[0]) { const reader = new FileReader(); reader.onload = e => { const preview = document.getElementById('preview'); preview.src = e.target.result; preview.style.display = 'block'; document.getElementById('upload-text').style.display = 'none'; document.getElementById('results').style.display = 'none'; document.getElementById('actionBtn').style.display = 'block'; }; reader.readAsDataURL(input.files[0]); } }
+        function showPreview(input) {
+            if (input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = e => {
+                    const preview = document.getElementById('preview');
+                    preview.src = e.target.result;
+                    preview.style.display = 'block';
+                    document.getElementById('upload-text').style.display = 'none';
+                    document.getElementById('results').style.display = 'none';
+                    document.getElementById('actionBtn').style.display = 'block';
+                    document.getElementById('actionBtn').innerText = "ANALYZE BIOMETRICS";
+                    document.getElementById('actionBtn').disabled = false;
+                };
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
 
         async function startAnalysis() {
             const file = document.getElementById('fileIn').files[0];
-            if (!file) return alert("Upload a portrait.");
+            if (!file) return alert("Upload a photo first.");
+            
             const btn = document.getElementById('actionBtn');
             const scanner = document.getElementById('scanner');
-            btn.disabled = true; btn.innerText = "BIOMETRIC SYNCING...";
+            btn.disabled = true;
+            btn.innerText = "MAPPING FACIAL STRUCTURE...";
             scanner.style.display = "block";
 
-            const base64 = await new Promise(r => { const reader = new FileReader(); reader.onload = () => r(reader.result.split(',')[1]); reader.readAsDataURL(file); });
+            const base64 = await new Promise(r => { 
+                const reader = new FileReader(); 
+                reader.onload = () => r(reader.result.split(',')[1]); 
+                reader.readAsDataURL(file); 
+            });
 
             try {
-                const response = await fetch('/api/analyze', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ image: base64 }) });
+                const response = await fetch('/api/analyze', { 
+                    method: 'POST', 
+                    headers: { 'Content-Type': 'application/json' }, 
+                    body: JSON.stringify({ image: base64 }) 
+                });
+                
                 const data = await response.json();
                 if (data.error) throw new Error(data.error);
 
-                // --- UPDATING THE 6 STATS (THE NEW LOGIC) ---
-                const stats = data.stats;
-                const categories = ['hairline', 'skin', 'masculinity', 'jawline', 'eyes', 'cheekbones'];
+                // --- UPDATE UI ---
+                document.getElementById('overall-val').innerText = data.overall_score;
 
-                categories.forEach(cat => {
-                    const score = stats[cat];
-                    // 1. Set the big number
+                const categories = ['hairline', 'skin', 'masculinity', 'jawline', 'eyes', 'cheekbones'];
+                categories.forEach((cat, index) => {
+                    const score = data.stats[cat];
                     document.getElementById(`val-${cat}`).innerText = score;
-                    // 2. Animate the progress bar width
-                    // (We add a tiny delay so you can watch them grow)
                     setTimeout(() => {
                         document.getElementById(`bar-${cat}`).style.width = `${score}%`;
-                    }, categories.indexOf(cat) * 50); // Staggered animation
+                    }, index * 100); 
                 });
 
-                document.getElementById('tips-list').innerHTML = data.glowup_tips.map(tip => `<div class="tip-item">${tip}</div>`).join('');
+                const tips = data.glowup_tips || ["Maintain a consistent grooming routine."];
+                document.getElementById('tips-list').innerHTML = tips.map(tip => `<div class="tip-item">${tip}</div>`).join('');
+                
                 document.getElementById('results').style.display = 'block';
                 btn.style.display = 'none';
 
-            } catch (err) { alert(err.message); btn.innerText = "RETRY"; btn.disabled = false; } finally { scanner.style.display = "none"; }
+            } catch (err) {
+                alert("AI Error: " + err.message);
+                btn.innerText = "RETRY ANALYSIS";
+                btn.disabled = false;
+            } finally {
+                scanner.style.display = "none";
+            }
         }
 
-        async function shareResults() { const shareData = { title: 'VANTIXIO AI Report', text: `My biometric scan is complete. Scan your aesthetic potential here:`, url: window.location.href }; try { if (navigator.share) { await navigator.share(shareData); } else { alert("Copied!"); } } catch (err) {} }
+        async function shareResults() {
+            const score = document.getElementById('overall-val').innerText;
+            const shareData = {
+                title: 'VANTIXIO AI Report',
+                text: `My overall aesthetic score is ${score}/100. Scan your biometrics here:`,
+                url: window.location.href
+            };
+            try {
+                if (navigator.share) { await navigator.share(shareData); } 
+                else { 
+                    await navigator.clipboard.writeText(`${shareData.text} ${shareData.url}`);
+                    alert("Copied to clipboard!");
+                }
+            } catch (err) { console.log(err); }
+        }
     </script>
 </body>
 </html>
