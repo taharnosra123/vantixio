@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VANTIXIO | AI Biometric Analysis</title>
-    <meta property="og:title" content="VANTIXIO | Biometric Breakdown">
+    <title>GLOMAXER | AI Biometric Analysis</title>
+    <meta property="og:title" content="GLOMAXER | Biometric Breakdown">
     <meta property="og:description" content="View my 6-point aesthetic analysis. Check yours now.">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
     <style>
@@ -30,8 +30,14 @@
 
         .container { width: 100%; max-width: 380px; }
 
-        .logo { text-align: center; font-weight: 800; font-size: 1.5rem; margin-bottom: 30px; letter-spacing: -1px;}
-        .logo span { color: var(--green); }
+        .logo-container {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .logo-image {
+            max-width: 120px;
+            height: auto;
+        }
 
         .upload-box { 
             background: var(--card); border: 1px solid #222; border-radius: 30px; aspect-ratio: 1/1.2; 
@@ -48,7 +54,6 @@
         #results { display: none; margin-top: 30px; animation: fadeIn 0.5s ease; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* OVERALL SCORE CARD */
         .overall-card {
             background: var(--card);
             padding: 30px;
@@ -60,7 +65,6 @@
         .overall-label { font-size: 0.75rem; color: var(--green); font-weight: 800; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 5px; }
         .overall-value { font-size: 4.5rem; font-weight: 800; color: #fff; line-height: 1; }
 
-        /* BIOMETRIC GRID */
         .biometric-card { 
             background: var(--card); 
             padding: 25px; 
@@ -78,7 +82,6 @@
         .stat-value { font-size: 2.2rem; font-weight: 800; color: #fff; line-height: 1; }
         .stat-total { font-size: 0.8rem; color: var(--text-secondary); font-weight: 600; margin-left: 2px; padding-bottom: 3px; }
 
-        /* PROGRESS BARS */
         .progress-container { width: 100%; height: 6px; background: var(--bar-bg); border-radius: 6px; overflow: hidden; }
         .progress-fill { height: 100%; background: var(--green); width: 0%; transition: width 1.2s cubic-bezier(0.17, 0.67, 0.83, 0.67); border-radius: 6px; }
 
@@ -90,7 +93,10 @@
 <body>
 
     <div class="container">
-        <div class="logo">VANTI<span>XIO</span></div>
+        <div class="logo-container">
+            <img src="/logo.png" alt="GLOMAXER AI Logo" class="logo-image" onerror="this.style.display='none'; document.getElementById('fallback-logo').style.display='block';">
+            <div id="fallback-logo" style="display:none; text-align: center; font-weight: 800; font-size: 1.5rem; letter-spacing: -1px;">GLO<span>MAXER</span></div>
+        </div>
 
         <div class="upload-box" onclick="document.getElementById('fileIn').click()">
             <div id="scanner" class="scan-line"></div>
@@ -102,13 +108,11 @@
         <button class="btn" id="actionBtn" onclick="startAnalysis()">ANALYZE BIOMETRICS</button>
 
         <div id="results">
-            <!-- OVERALL SCORE DISPLAY -->
             <div class="overall-card">
                 <div class="overall-label">Overall Aesthetic Score</div>
                 <div id="overall-val" class="overall-value">0</div>
             </div>
 
-            <!-- 6-POINT GRID -->
             <div class="biometric-card">
                 <div class="biometric-grid">
                     
@@ -153,7 +157,7 @@
 
             <div id="tips-list" class="tips-container"></div>
             
-            <button class="btn" style="background: var(--green); color: #000; margin-top: 10px;" onclick="shareResults()">SHARE MY GLOWUP 🚀</button>
+            <button class="btn" style="background: var(--green); color: #000; margin-top: 10px;" onclick="shareResults()">SHARE MY REPORT 🚀</button>
         </div>
     </div>
 
@@ -182,7 +186,7 @@
             const btn = document.getElementById('actionBtn');
             const scanner = document.getElementById('scanner');
             btn.disabled = true;
-            btn.innerText = "MAPPING FACIAL STRUCTURE...";
+            btn.innerText = "GLOMAXING IN PROGRESS...";
             scanner.style.display = "block";
 
             const base64 = await new Promise(r => { 
@@ -201,7 +205,6 @@
                 const data = await response.json();
                 if (data.error) throw new Error(data.error);
 
-                // --- UPDATE UI ---
                 document.getElementById('overall-val').innerText = data.overall_score;
 
                 const categories = ['hairline', 'skin', 'masculinity', 'jawline', 'eyes', 'cheekbones'];
@@ -231,8 +234,8 @@
         async function shareResults() {
             const score = document.getElementById('overall-val').innerText;
             const shareData = {
-                title: 'VANTIXIO AI Report',
-                text: `My overall aesthetic score is ${score}/100. Scan your biometrics here:`,
+                title: 'GLOMAXER AI Report',
+                text: `My overall aesthetic score is ${score}/100 according to GLOMAXER AI. Scan your biometrics here:`,
                 url: window.location.href
             };
             try {
