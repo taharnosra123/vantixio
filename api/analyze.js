@@ -1,5 +1,3 @@
-// This is your updated api/analyze.js file
-
 export default async function handler(req, res) {
     if (req.method !== 'POST') {
         return res.status(405).json({ error: 'Method not allowed' });
@@ -12,10 +10,8 @@ export default async function handler(req, res) {
         return res.status(500).json({ error: 'API Key is missing in Vercel settings.' });
     }
 
-    // THE UPDATED "BRAIN" PROMPT
-    // We are telling the AI exactly what features to look at.
     const systemPrompt = `
-        You are VANTIXIO Biometric AI. 
+        You are GLOMAXER Biometric AI. 
         Analyze the uploaded portrait for these 6 aesthetic biometric categories.
         You must return ONLY a strict JSON object with this exact format:
         {
